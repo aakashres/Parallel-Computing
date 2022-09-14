@@ -13,7 +13,12 @@ struct sum_parameters
     int end_index;
 };
 
-// start_index inclusive, end_index exclusive
+/**
+ * @brief Computes the sum of array from [start_index, end_index)
+ *
+ * @param args_ptr
+ * @return void*
+ */
 void *sum_array(void *args_ptr)
 {
     struct sum_parameters params = *((struct sum_parameters *)args_ptr);
@@ -28,8 +33,13 @@ void *sum_array(void *args_ptr)
     return (void *)sum;
 }
 
-// Calculates Serial Sum
-double sum_serial(int *input_arr)
+/**
+ * @brief Calculates Serial Sum
+ *
+ * @param input_arr array whose average is to be calculated
+ * @return double average of the array
+ */
+double average_serial(int *input_arr)
 {
     struct sum_parameters param;
     param.array = input_arr;
@@ -39,11 +49,16 @@ double sum_serial(int *input_arr)
     return (double)sum / INPUT_SIZE;
 }
 
-// Calculates Parallel Sum
-// Divides array chunk into NUM_THREADS
-// Spawns NUM_THREADS - 1 thread and calculates sum of NUM_THREADS - 1 chunk
-// Main thread is considred to calculate sum for last chunk
-double sum_parallel(int *input_arr)
+/**
+ * @brief Calculates Parallel Sum
+ * Divides array chunk into NUM_THREADS
+ * Spawns NUM_THREADS - 1 thread and calculates sum of NUM_THREADS - 1 chunk
+ * Main thread is considred to calculate sum for last chunk
+ *
+ * @param input_arr array whose average is to be calculated
+ * @return double average of the array
+ */
+double average_parallel(int *input_arr)
 {
     pthread_t threads[NUM_THREADS - 1];
     struct sum_parameters params[NUM_THREADS];
@@ -69,6 +84,22 @@ double sum_parallel(int *input_arr)
     return (double)sum / INPUT_SIZE;
 }
 
+/**
+ * @brief
+ * Main for calculating average of N numbers using
+ *  1. Serial Execution
+ *  2. Parallel Execution
+ *
+ * To compile:
+ *  gcc -o average -lpthread average.c
+ *
+ * To execute:
+ *  ./average <serial|parallel>
+ *
+ * @param argc
+ * @param argv
+ * @return int
+ */
 int main(int argc, char *argv[])
 {
     if (argc < 2)
@@ -84,13 +115,13 @@ int main(int argc, char *argv[])
     }
     if (strcmp(argv[1], "serial") == 0)
     {
-        average = sum_serial(input);
+        average = average_serial(input);
         printf("Serial Average from 1 to %d = %0.3f\n", INPUT_SIZE, average);
         return 0;
     }
     else if (strcmp(argv[1], "parallel") == 0)
     {
-        average = sum_parallel(input);
+        average = average_parallel(input);
         printf("Parallel Average from 1 to %d  = %0.3f\n", INPUT_SIZE, average);
         pthread_exit(NULL);
         return 0;
