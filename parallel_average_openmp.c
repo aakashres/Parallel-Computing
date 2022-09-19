@@ -7,37 +7,39 @@
 /**
  * @brief Program to calculate average of INPUT_SIZE array containing 1 to INPUT_SIZE in parallel manner using OpenMP
  *
- * @return int execution status
+ *  INPUT_SIZE: Total size of the array
+ *  NUM_THREADS: Total threads running in parallel to calculate partial sum of the array
+ *
+ *
+ * @return int execution status of the main program
  */
 int main()
 {
     {
         omp_set_num_threads(NUM_THREADS);
         double average = 0;
-        int thread_sum = 0;
+        int sum = 0;
+
         // Create an input array of length INPUT_SIZE containing 1 to INPUT_SIZE integers
+        // Using Prallel threads to fill in the array as  well
         int input[INPUT_SIZE];
-        for (int i = 0; i < INPUT_SIZE; i++)
         {
-            input[i] = i + 1;
+#pragma omp parallel for
+            for (int i = 0; i < INPUT_SIZE; i++)
+                input[i] = i + 1;
         }
         // Parallelizing average using Openmp
-#pragma omp parallel private(thread_sum)
+        // Parallel for loop to calculate sum of number divided into NUM_THREADS
+        // I used critical section previously to sum all the thread_sums into one value
+        // Since, this is an reduction step. This can easily be reduced using reduction declaritive which poses less overhead
         {
-            int i;
-            // Parallel for loop to calculate sum of number divided into NUM_THREADS
-#pragma omp for
-            for (i = 0; i < INPUT_SIZE; i++)
-            {
-                thread_sum += input[i];
-            }
-            // summing the thread_sum into one single sum. Critical denotes only one thread can execute at once
-#pragma omp critical
-            {
-                average += thread_sum;
-            }
+#pragma omp parallel for reduction(+ \
+                                   : sum)
+            for (int i = 0; i < INPUT_SIZE; i++)
+                sum += input[i];
         }
-        average = average / INPUT_SIZE;
+
+        average = (double)sum / INPUT_SIZE;
         printf("Parallel Average = %0.2f\n", average);
     }
     return 0;
