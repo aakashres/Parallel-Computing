@@ -4,6 +4,9 @@
 #define INPUT_SIZE 1000
 
 /* 
+    To load necessary modules:
+        module load mpich/ge/gcc/64/3.2.1
+        module load gcc8/8.4.0
     To compile: 
         mpicc -o mpi_parallel parallel_average_mpi.c
     To execute:
