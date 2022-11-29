@@ -7,11 +7,9 @@
 #SBATCH -t 00:02:00 # run time (hh:mm:ss) - 2.0 mins in this example. 
 #SBATCH --gres=gpu:1
 
-# Generally needed modules: 
 module load gcc8/8.4.0
 module load slurm
 module load nvidia_hpcsdk
 
 
-# nvcc hello_cuda.cu -o ./bin/hello_cuda
-./bin/hello_cuda
+./bin/cuda_matrix

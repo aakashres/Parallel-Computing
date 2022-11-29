@@ -52,7 +52,7 @@ int main( int argc, char* argv[] )
  
     // Copy host vectors to device
     cudaMemcpy( d_a, h_a, bytes, cudaMemcpyHostToDevice);
-    cudaMemcpy( d_b, h_b, bytes, ccudaMemcpyHostToDevice);
+    cudaMemcpy( d_b, h_b, bytes, cudaMemcpyHostToDevice);
  
     int blockSize, gridSize;
  
@@ -66,7 +66,7 @@ int main( int argc, char* argv[] )
     vecAdd<<<gridSize, blockSize>>>(d_a, d_b, d_c, n);
  
     // Copy array back to host
-    cudaMemcpy( h_c, d_c, bytes, cudaMemcpyDeviceToHost );
+    cudaMemcpy( h_c, d_c, bytes, cudaMemcpyDeviceToHost);
  
     // Sum up vector c and print result divided by n, this should equal 1 within error
     double sum = 0;

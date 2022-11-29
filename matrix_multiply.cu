@@ -1,14 +1,31 @@
 /*
- *  file name: matrix.cu
- *
- *  matrix.cu contains the code that realize some common used matrix operations in CUDA
- *
- *  this is a toy program for learning CUDA, some functions are reusable in other project
- *
- */
+
+To compile:
+module load gcc8/8.4.0
+module load nvidia_hpcsdk
+nvcc matrix_multiply.cu -o cuda_matrix
+
+TO execute: Create a slurm script and submit
+#!/bin/bash
+#SBATCH -J KERNELS # job name 
+#SBATCH -o class_%j.txt # output and error file name %j expands to jobID) 
+#SBATCH -n 1 # total number of tasks requested 
+#SBATCH -N 1 # number of nodes you want to run on
+#SBATCH -p classroomgpu # queue (partition) -- defq, eduq, gpuq, short 
+#SBATCH -t 00:02:00 # run time (hh:mm:ss) - 2.0 mins in this example. 
+#SBATCH --gres=gpu:1
+
+module load gcc8/8.4.0
+module load slurm
+module load nvidia_hpcsdk
+
+./cuda_matrix
+*/
+
+
+
 #include <stdio.h>
 #include <stdlib.h>
-#include <assert.h>
 
 #define BLOCK_SIZE 16
 
@@ -100,15 +117,13 @@ int main(int argc, char const *argv[])
     {
         for (int j = 0; j < n; ++j)
         {
-            // printf("[%d][%d]:%d == [%d][%d]:%d, ", i, j, h_cc[i*k + j], i, j, h_c[i*k + j]);
             if (h_cc[i * n + j] != h_c[i * n + j])
             {
                 all_ok = 0;
             }
         }
-        // printf("\n");
     }
-
+    printf("Cuda Matrix Multiplication \n");
     for (int i = 0; i < n; ++i)
     {
         for (int j = 0; j < n; ++j)
@@ -118,7 +133,7 @@ int main(int argc, char const *argv[])
         printf("\n");
     }
     printf("\n");
-
+    printf("CPU Matrix Multiplication \n");
     for (int i = 0; i < n; ++i)
     {
         for (int j = 0; j < n; ++j)
@@ -127,7 +142,9 @@ int main(int argc, char const *argv[])
         }
         printf("\n");
     }
-
+    
+    printf("\n");
+    printf("Cuda Matrix Multiplication vs CPU matrix Multiplication \n");
 
     // roughly compute speedup
     if (all_ok)

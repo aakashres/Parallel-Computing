@@ -20,5 +20,18 @@ mpi_parallel: configdir
 mpi_matrix: configdir
 	mpicc -o ./bin/mpi_matrix matrix_multiply.c
 
+cuda_matrix: configdir
+	nvcc matrix_multiply.cu -o ./bin/cuda_matrix
+
+hello_cuda: configdir
+	nvcc hello_cuda.cu -o ./bin/hello_cuda
+
+cuda_parallel: configdir
+	nvcc cuda_parallel_average.cu -o ./bin/parallel_cuda	
+
+	
+sum: configdir
+	nvcc sum.cu -o ./bin/parallel_cuda	
+
 clean:
 	rm -rf ./bin/*
